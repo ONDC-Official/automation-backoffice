@@ -37,9 +37,14 @@ function App() {
     return <div>Loding...</div>;
   }
 
+  console.log("?>", import.meta.env.VITE_BASE_URL);
+
   return (
     <Routes>
-      <Route path="/" element={<LoginPage />} />
+      <Route
+        path={`${import.meta.env.VITE_BASE_URL}`}
+        element={<LoginPage />}
+      />
       <Route
         path="/dashboard"
         element={
