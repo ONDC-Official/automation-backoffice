@@ -1,6 +1,6 @@
 import express from "express";
 import routes from "./routes/index";
-import { redisService } from "ondc-automation-cache-lib";
+import { RedisService } from "ondc-automation-cache-lib";
 import cookieParser from "cookie-parser";
 // import redisClient from './config/redisConfig'; // Import the Redis client
 import session from "express-session";
@@ -11,7 +11,7 @@ const RedisStore = require("connect-redis").default;
 const app = express();
 
 // Select and use database 0
-redisService.useDb(0);
+RedisService.useDb(0);
 
 // Log Redis connection status
 // redisClient.on('connect', () => {
@@ -23,7 +23,7 @@ redisService.useDb(0);
 // });
 
 let redisStore = new RedisStore({
-  client: redisService,
+  client: RedisService,
 });
 
 app.use(

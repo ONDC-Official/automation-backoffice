@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { ToastContainer } from "react-toastify";
+// import { ToastContainer } from "react-toastify";
 import "./App.css";
 import MainContent from "./components/main-content";
 import TopBar from "./components/top-bar";
 import LoginPage from "./pages/login";
 import {
-  BrowserRouter as Router,
+  // BrowserRouter as Router,
   Route,
   Routes,
   Navigate,

@@ -1,4 +1,10 @@
-import React from "react";
+interface IProps {
+  label?: string;
+  onClick: () => void;
+  type?: "submit" | "reset" | "button" | undefined;
+  className?: string;
+  disabled?: boolean;
+}
 
 const Button = ({
   label,
@@ -6,7 +12,7 @@ const Button = ({
   type = "button",
   className = "",
   disabled = false,
-}) => {
+}: IProps) => {
   return (
     <button
       type={type}

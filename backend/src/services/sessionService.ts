@@ -1,4 +1,4 @@
-import { redisService } from "ondc-automation-cache-lib";
+import { RedisService } from "ondc-automation-cache-lib";
 import { ContextCache, SessionData } from "../interfaces/sessionData";
 import {
   TransformedSessionData,
@@ -10,7 +10,7 @@ import { fetchConfigService } from "./flowService";
 const SESSION_EXPIRY = 3600; // 1 hour
 
 export const switchCacheDb = (db_id: number) => {
-  redisService.useDb(db_id);
+  RedisService.useDb(db_id);
 };
 
 export const createSessionService = async (
@@ -59,7 +59,7 @@ export const createSessionService = async (
 
   try {
     // Store session data in Redis
-    await redisService.setKey(
+    await RedisService.setKey(
       subscriberUrl,
       JSON.stringify(transformedData),
       SESSION_EXPIRY
@@ -71,11 +71,25 @@ export const createSessionService = async (
   }
 };
 
+export const getAllSessionService = async () => {
+  try {
+    // Fetch session data from Redis
+    // const sessionData = await redisClient.get(sessionId);
+    const sessionData = await RedisService.getAllKeys();
+
+    // Return the session data if found
+    return sessionData;
+  } catch (error: any) {
+    // Return a 500 error in case of any issues
+    throw new Error(`${error.message}`);
+  }
+};
+
 export const getSessionService = async (sessionKey: SessionKeyType) => {
   try {
     // Fetch session data from Redis
     // const sessionData = await redisClient.get(sessionId);
-    const sessionData = await redisService.getKey(sessionKey);
+    const sessionData = await RedisService.getKey(sessionKey);
     // if (!sessionData) {
     //   throw new Error("Session not found");
     // }
@@ -108,7 +122,7 @@ export const updateSessionService = async (
 
   try {
     // Retrieve the session data from Redis
-    const sessionData = await redisService.getKey(subscriber_url);
+    const sessionData = await RedisService.getKey(subscriber_url);
 
     if (!sessionData) {
       throw new Error("Session not found");
@@ -135,7 +149,7 @@ export const updateSessionService = async (
     // }
 
     // Save the updated session data back to Redis
-    await redisService.setKey(
+    await RedisService.setKey(
       subscriber_url,
       JSON.stringify(data),
       SESSION_EXPIRY
@@ -149,7 +163,7 @@ export const updateSessionService = async (
 
 export const deleteService = async (subscriber_url: string) => {
   try {
-    await redisService.deleteKey(subscriber_url);
+    await RedisService.deleteKey(subscriber_url);
 
     return "Session deleted successfully";
   } catch (e: any) {

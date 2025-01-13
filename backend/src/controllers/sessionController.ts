@@ -4,6 +4,7 @@ import {
   updateSessionService,
   deleteService,
   switchCacheDb,
+  getAllSessionService,
 } from "../services/sessionService";
 
 const SESSION_EXPIRY = 3600; // 1 hour
@@ -85,4 +86,16 @@ export const updateCacheDb = async (req: Request, res: Response) => {
 
   switchCacheDb(db_id);
   res.send({ message: "Cache DB swithced" });
+};
+
+export const getAllSession = async (req: Request, res: Response) => {
+  try {
+    const sessionData = await getAllSessionService();
+    res.status(200).send(sessionData);
+  } catch (error: any) {
+    console.error(error);
+    res
+      .status(500)
+      .send({ message: "Error fetching session", error: error.message });
+  }
 };

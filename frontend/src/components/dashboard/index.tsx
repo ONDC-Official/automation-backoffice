@@ -85,7 +85,7 @@ const Dashboard = ({ label, db_id }: IProps) => {
     try {
       parsedPayload = JSON.parse(editedPayload);
     } catch (e) {
-      toast.erro("Invalid payload");
+      toast.error("Invalid payload");
     }
 
     if (!userData?.token) {
@@ -160,7 +160,7 @@ const Dashboard = ({ label, db_id }: IProps) => {
           )}
           {cacheData?.length > 0 && <h2>Results</h2>}
           {cacheData?.length > 0 &&
-            cacheData.map((item) => {
+            cacheData.map((item: any) => {
               return (
                 <div className="h-72 flex flex-col relative">
                   <div
@@ -181,7 +181,7 @@ const Dashboard = ({ label, db_id }: IProps) => {
                         ? editedPayload
                         : JSON.stringify(item, null, 2)
                     }
-                    onChange={(data: string) => setEditedPayload(data)}
+                    onChange={(data: any) => setEditedPayload(data)}
                     options={{
                       minimap: { enabled: false },
                       readOnly: !isEdittable,

@@ -1,4 +1,11 @@
-import React from "react";
+interface IProps {
+  label?: string;
+  type?: string;
+  placeholder: string;
+  value?: string;
+  onChange: (value: string) => void;
+  className?: string;
+}
 
 const Input = ({
   label,
@@ -7,8 +14,8 @@ const Input = ({
   value,
   onChange,
   className = "bg-white text-black",
-}) => {
-  const handleOnChange = (e) => {
+}: IProps) => {
+  const handleOnChange = (e: any) => {
     onChange(e.target.value);
   };
 

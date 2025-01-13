@@ -1,7 +1,7 @@
 // src/components/MainContent.jsx
 import { useState } from "react";
 import Sidebar from "./side-bar";
-import { FaHome } from "react-icons/fa";
+// import { FaHome } from "react-icons/fa";
 // import { TbTestPipe2Filled } from "react-icons/tb";
 // import { GoWorkflow } from "react-icons/go";
 // import { PiNetwork } from "react-icons/pi";
@@ -50,7 +50,7 @@ const MainContent = () => {
           isSidebarOpen ? " ml-64" : "ml-20"
         }`}
       >
-        <GetMainContent activeTab={activeTab} isSidebarOpen={isSidebarOpen} />
+        <GetMainContent activeTab={activeTab} />
       </div>
     </div>
   );
@@ -58,10 +58,8 @@ const MainContent = () => {
 
 function GetMainContent({
   activeTab,
-  isSidebarOpen,
 }: {
   activeTab: string;
-  isSidebarOpen: boolean;
 }) {
   switch (activeTab) {
     case "#api-service":

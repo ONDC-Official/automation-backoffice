@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import SidebarHeader from "./ui/side-bar-header";
 
 interface Tab {
@@ -24,7 +24,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   activeTab,
   setActiveTab,
 }) => {
-  const location = useLocation();
+  //   const location = useLocation();
   // Sync activeTab with the URL path
   //   useEffect(() => {
   //     console.log(location.pathname);
