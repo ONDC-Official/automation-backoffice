@@ -48,6 +48,7 @@ jobs:
           REPO_DIR=~/ONDC-automation-framework/automation-backoffice
           echo "Writing environment variables to .env file"
           echo "VITE_BACKEND_URL=${{ secrets.VITE_BACKEND_URL }}" >> \$REPO_DIR/frontend/.env
+          echo "VITE_BASE_PATH=${{ secrets.VITE_BASE_PATH }}" >> \$REPO_DIR/frontend/.env
           echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> \$REPO_DIR/backend/.env
           echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> \$REPO_DIR/backend/.env
           echo "PORT=${{ secrets.PORT }}" >> \$REPO_DIR/backend/.env
@@ -55,6 +56,7 @@ jobs:
           echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> \$REPO_DIR/backend/.env
           echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> \$REPO_DIR/backend/.env
           echo "REDIS_USERNAME=${{ secrets.REDIS_USERNAME }}" >> \$REPO_DIR/backend/.env
+          
           EOF
 
       - name: Verify docker-compose.yml files
@@ -69,7 +71,7 @@ jobs:
           echo ".env and docker-compose.yml files found."
           EOF
 
-      - name: Automation UI Deployment
+      - name: Automation Backoffice UI Deployment
         run: |
           echo "Deploying with Docker Compose"
           ssh -i ./key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} <<EOF
