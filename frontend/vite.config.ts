@@ -5,9 +5,8 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   // base: `${process.env.VITE_BASE_URL}`,
-  base: "/",
+  base: "/backoffice-frontend",
   server: {
-    host: "0.0.0.0", // Allow traffic from the internet
-    port: process.env.VITE_PORT, // You can change this to any available port
+    host: "0.0.0.0" // Allow traffic from the internet
   },
 });
