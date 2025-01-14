@@ -48,7 +48,7 @@ jobs:
           REPO_DIR=~/ONDC-automation-framework/automation-backoffice
           echo "Writing environment variables to .env file"
           echo "VITE_BACKEND_URL=${{ secrets.VITE_BACKEND_URL }}" >> \$REPO_DIR/frontend/.env
-          echo "VITE_BASE_PATH=${{ secrets.VITE_BASE_PATH }}" >> \$REPO_DIR/frontend/.env
+          echo "VITE_BASE_URL=${{ secrets.VITE_BASE_PATH }}" >> \$REPO_DIR/frontend/.env
           echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> \$REPO_DIR/backend/.env
           echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> \$REPO_DIR/backend/.env
           echo "PORT=${{ secrets.PORT }}" >> \$REPO_DIR/backend/.env
