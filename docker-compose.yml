@@ -1,5 +1,5 @@
 services:
-  frontend:
+  backend:
     restart: always
     build: ./backend
     ports:
@@ -7,7 +7,7 @@ services:
     env_file:
       - backend/.env
 
-  backend:
+  frontend:
     restart: always
     build: ./frontend
     ports:
