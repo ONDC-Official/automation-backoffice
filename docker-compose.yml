@@ -3,7 +3,7 @@ services:
     restart: always
     build: ./backend
     ports:
-      - 5200:5000
+      - ${PORT:-5400}:${PORT:-5400}
     env_file:
       - backend/.env
 
@@ -11,7 +11,7 @@ services:
     restart: always
     build: ./frontend
     ports:
-      - 5100:5001
+      - 5500:5001
     env_file:
       - frontend/.env
 

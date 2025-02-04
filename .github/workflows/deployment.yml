@@ -2,14 +2,17 @@ name: ONDC Automation Backoffice Service Deployment
 
 on:
   push:
-    branches: ["main"]
+    branches: ["staging"]
   workflow_dispatch:
 
 
 jobs:
   ssh-ec2:
     runs-on: ubuntu-latest
-
+    environment: 
+          name: staging
+          url: https://github.com
+          
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -22,11 +25,11 @@ jobs:
           ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
           ssh -i ./key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} -T <<EOF
-          REPO_DIR=~/ONDC-automation-framework/automation-backoffice
+          REPO_DIR=~/ONDC-automation-framework-staging/automation-backoffice
           echo "Removing existing repository directory if exists"
           rm -rf \$REPO_DIR
-          echo "Cloning repository from main branch"
-          git clone --single-branch --branch main https://github.com/ONDC-Official/automation-backoffice.git \$REPO_DIR
+          echo "Cloning repository from staging branch"
+          git clone --single-branch --branch staging https://github.com/ONDC-Official/automation-backoffice.git \$REPO_DIR
           EOF
 
       - name: Install Docker Compose (if not installed)
@@ -47,7 +50,7 @@ jobs:
         run: |
           echo "Writing secrets to .env file"
           ssh -i ./key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} <<EOF
-          REPO_DIR=~/ONDC-automation-framework/automation-backoffice
+          REPO_DIR=~/ONDC-automation-framework-staging/automation-backoffice
           echo "Writing environment variables to .env file"
           echo "VITE_BACKEND_URL=${{ secrets.VITE_BACKEND_URL }}" >> \$REPO_DIR/frontend/.env
           echo "VITE_BASE_URL=${{ secrets.VITE_BASE_PATH }}" >> \$REPO_DIR/frontend/.env
@@ -64,7 +67,7 @@ jobs:
       - name: Verify docker-compose.yml files
         run: |
           ssh -i ./key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} <<EOF
-          REPO_DIR=~/ONDC-automation-framework/automation-backoffice
+          REPO_DIR=~/ONDC-automation-framework-staging/automation-backoffice
           # Check if docker-compose.yml files exist
           if [ ! -f \$REPO_DIR/docker-compose.yml ]; then
             echo "docker-compose.yml file not found in \$REPO_DIR!"
@@ -77,7 +80,7 @@ jobs:
         run: |
           echo "Deploying with Docker Compose"
           ssh -i ./key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} <<EOF
-          REPO_DIR=~/ONDC-automation-framework/automation-backoffice
+          REPO_DIR=~/ONDC-automation-framework-staging/automation-backoffice
           cd \$REPO_DIR
 
           if [ ! -f docker-compose.yml ]; then
@@ -87,5 +90,5 @@ jobs:
 
           # Start the containers using Docker Compose
           echo "Running docker-compose up -d --build"
-          sudo docker compose up -d --build
+          sudo docker compose -p automation-staging up -d --build
           EOF
