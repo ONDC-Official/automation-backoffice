@@ -7,7 +7,7 @@ services:
     env_file:
       - backend/.env
 
-  backoffice-frontend:
+  backoffice-frontend: 
     restart: always
     build: ./frontend
     ports:
