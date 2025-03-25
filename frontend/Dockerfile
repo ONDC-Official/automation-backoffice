@@ -4,9 +4,9 @@ COPY package.json ./
 RUN npm install
 COPY . .
 RUN npm run build
-RUN mkdir dist/backoffice-frontend
+RUN mkdir dist/backoffice
 
-RUN mv dist/assets dist/backoffice-frontend/assets
+RUN mv dist/assets dist/backoffice/assets
 FROM node:18-slim
 WORKDIR /app
 RUN npm install -g serve

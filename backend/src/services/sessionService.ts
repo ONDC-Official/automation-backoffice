@@ -13,10 +13,7 @@ export const switchCacheDb = (db_id: number) => {
   RedisService.useDb(db_id);
 };
 
-export const createSessionService = async (
-  sessionId: string,
-  data: SessionData
-) => {
+export const dummy = async (sessionId: string, data: SessionData) => {
   const {
     city,
     domain,
@@ -168,5 +165,31 @@ export const deleteService = async (subscriber_url: string) => {
     return "Session deleted successfully";
   } catch (e: any) {
     throw new Error(`${e.message}`);
+  }
+};
+
+export const createSessionService = async (sessionID: string, data: any) => {
+  console.log("session data payload", sessionID, data);
+
+  try {
+    const session = await RedisService.getKey(sessionID);
+
+    console.log("session>>>>", session);
+
+    if (session) {
+      throw new Error("session already exists");
+      return;
+    }
+
+    // Store session data in Redis
+    const newSession = await RedisService.setKey(
+      sessionID,
+      JSON.stringify(data),
+      SESSION_EXPIRY
+    );
+    console.log("session", newSession);
+    return "Session created successfully";
+  } catch (error: any) {
+    throw new Error(`${error.message}`);
   }
 };

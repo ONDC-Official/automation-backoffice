@@ -1,5 +1,3 @@
-// src/routes/sessionRoutes.ts
-
 import { Router } from "express";
 import {
   getSession,
@@ -7,7 +5,6 @@ import {
   deleteSession,
   updateCacheDb,
   getAllSession,
-  createSession,
 } from "../controllers/sessionController";
 import validateToken from "../middleware";
 
@@ -17,7 +14,6 @@ router.get("/all", validateToken, getAllSession);
 router.get("/", validateToken, getSession);
 router.put("/", validateToken, updateSession);
 router.delete("/", validateToken, deleteSession);
-router.post("/", createSession);
-router.post("/updatedb", updateCacheDb);
+router.post("/updatedb", validateToken, updateCacheDb);
 
 export default router;

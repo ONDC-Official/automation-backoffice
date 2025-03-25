@@ -5,6 +5,7 @@ import {
   deleteService,
   switchCacheDb,
   getAllSessionService,
+  createSessionService,
 } from "../services/sessionService";
 
 const SESSION_EXPIRY = 3600; // 1 hour
@@ -97,5 +98,19 @@ export const getAllSession = async (req: Request, res: Response) => {
     res
       .status(500)
       .send({ message: "Error fetching session", error: error.message });
+  }
+};
+
+export const createSession = async (req: Request, res: Response) => {
+  const { sessionID, payload } = req.body;
+
+  try {
+    const response = await createSessionService(sessionID, payload);
+    res.status(200).send({ message: response });
+  } catch (error: any) {
+    console.error(error);
+    res
+      .status(500)
+      .send({ message: "Error creating session", error: error.message });
   }
 };
