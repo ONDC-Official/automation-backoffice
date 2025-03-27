@@ -58,7 +58,7 @@ jobs:
           echo "SESSION_SECRET=${{ secrets.SESSION_SECRET }}" >> \$REPO_DIR/backend/.env
           echo "PORT=${{ secrets.PORT }}" >> \$REPO_DIR/backend/.env
           echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> \$REPO_DIR/backend/.env
-          echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> \$REPO_DIR/backend/.env
+          echo "REDIS_PORT=${{ vars.REDIS_PORT }}" >> \$REPO_DIR/backend/.env
           echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> \$REPO_DIR/backend/.env
           echo "REDIS_USERNAME=${{ secrets.REDIS_USERNAME }}" >> \$REPO_DIR/backend/.env
           
