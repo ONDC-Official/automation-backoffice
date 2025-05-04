@@ -1,3 +1,4 @@
+require("./config/otelConfig")
 import app from './app';
 import * as dotenv from 'dotenv'
 
