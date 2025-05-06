@@ -4,7 +4,8 @@ import { RedisService } from "ondc-automation-cache-lib";
 import cookieParser from "cookie-parser";
 // import redisClient from './config/redisConfig'; // Import the Redis client
 import session from "express-session";
-import redisClient from "./config/redisConfig";
+import requestlog from "./middleware/requestLog";
+import responseLog from "./middleware/responseLog";
 import cors from "cors";
 const RedisStore = require("connect-redis").default;
 
@@ -43,6 +44,8 @@ app.use(cors());
 app.use(express.json());
 // Middleware to parse cookies
 app.use(cookieParser());
+app.use(requestlog);
+app.use(responseLog);
 
 app.use(routes);
 
