@@ -47,7 +47,7 @@
 	"name": "backend",
 	"version": "1.0.0",
 	"main": "index.js",
-	"type": "module",
+	"type": "commonjs",
 	"scripts": {
 		"start": "node dist/src/index.js",
 		"dev": "nodemon src/index.ts",
