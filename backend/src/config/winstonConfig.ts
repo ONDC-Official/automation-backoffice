@@ -1,13 +1,15 @@
-import winston from "winston";
-import chalk, { ChalkInstance} from "chalk";
-import LokiTransport from "winston-loki";
 import { LogParams } from "../interfaces/logger";
+
+const winston = require("winston");
+const chalk = require("chalk");
+
+
 
 
 const { combine, timestamp, printf, errors } = winston.format;
 
 // Define colors for log levels and messages
-const levelColors: Record<string, ChalkInstance> = {
+const levelColors: Record<string, any> = {
 	error: chalk.bold.red, // Bright red for errors
 	warn: chalk.hex("#FFA500"), // Orange for warnings
 	info: chalk.blue, // Blue for information
@@ -15,7 +17,7 @@ const levelColors: Record<string, ChalkInstance> = {
 	default: chalk.white, // Default color for others
 };
 
-const messageColors: Record<string, ChalkInstance> = {
+const messageColors: Record<string, any> = {
 	error: chalk.redBright, // Highlight error messages
 	warn: chalk.yellowBright, // Bright yellow for warnings
 	info: chalk.cyan, // Cyan for information messages
@@ -24,7 +26,7 @@ const messageColors: Record<string, ChalkInstance> = {
 };
 
 // Custom log format
-const logFormat = printf(({ level, message, timestamp, stack, transaction_id , ...meta}) => {
+const logFormat = printf(({ level, message, timestamp, stack, transaction_id , ...meta}:any) => {
 	const levelColor = levelColors[level] || levelColors.default; // Colorize level
 	const messageColor = messageColors[level] || messageColors.default; // Colorize message
 
