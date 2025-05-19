@@ -1,15 +1,14 @@
 // Enable strict mode automatically in ES modules
 import dotenv from 'dotenv';
 dotenv.config();
-
-import {logger} from '../utils/logger';
+import { logInfo } from './winstonConfig';
 
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
-logger.info('Starting opentelemetry tracing');
+logInfo({message:'Starting opentelemetry tracing'})
 
 const resource = resourceFromAttributes({
   [ATTR_SERVICE_NAME]: process.env.SERVICE_NAME,
