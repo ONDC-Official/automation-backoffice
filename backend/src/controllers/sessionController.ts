@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import archiver from "archiver";
 import {
   getSessionService,
   updateSessionService,
@@ -7,6 +8,7 @@ import {
   getAllSessionService,
   createSessionService,
 } from "../services/sessionService";
+import { getLogsForTransactionId } from "../services/dbService";
 import { logError, logInfo } from "../config/winstonConfig";
 
 const SESSION_EXPIRY = 3600; // 1 hour
@@ -15,26 +17,26 @@ const COOKIE_OPTIONS = { maxAge: SESSION_EXPIRY, httpOnly: true };
 // Helper function to set session cookie
 const setSessionCookie = (res: Response, sessionId: string) => {
   logInfo({
-    message: 'Entering setSessionCookie Controller Function',
-    meta: { sessionId }
-  })
+    message: "Entering setSessionCookie Controller Function",
+    meta: { sessionId },
+  });
   res.cookie("sessionId", sessionId, COOKIE_OPTIONS);
   logInfo({
-    message: 'Exiting setSessionCookie Controller Function',
-    meta: { sessionId }
-  })
+    message: "Exiting setSessionCookie Controller Function",
+    meta: { sessionId },
+  });
 };
 
 export const getSession = async (req: Request, res: Response) => {
   logInfo({
-    message: 'Entering getSession Controller Function'
-  })
+    message: "Entering getSession Controller Function",
+  });
   const subscriber_url = req.query.subscriber_url as string;
 
   if (!subscriber_url) {
     logInfo({
-      message: 'Exiting getSession Controller Function'
-    })
+      message: "Exiting getSession Controller Function",
+    });
     res.status(400).send({ message: "Session Key is required." });
     return;
   }
@@ -42,16 +44,16 @@ export const getSession = async (req: Request, res: Response) => {
   try {
     const sessionData = await getSessionService(subscriber_url);
     logInfo({
-      message: 'Exiting getSession Controller Function',
-      meta: { sessionId: subscriber_url }
-    })
+      message: "Exiting getSession Controller Function",
+      meta: { sessionId: subscriber_url },
+    });
     res.status(200).send(sessionData);
   } catch (error: any) {
     logError({
-      message: 'Error in getSession Controller Function',
+      message: "Error in getSession Controller Function",
       meta: { sessionId: subscriber_url },
-      error
-    })
+      error,
+    });
     res
       .status(500)
       .send({ message: "Error fetching session", error: error.message });
@@ -60,14 +62,14 @@ export const getSession = async (req: Request, res: Response) => {
 
 export const updateSession = async (req: Request, res: Response) => {
   logInfo({
-    message: 'Entering updateSession Controller Function',
-  })
+    message: "Entering updateSession Controller Function",
+  });
   const subscriber_url = req.query.subscriber_url as string;
 
   if (!subscriber_url) {
     logInfo({
-      message: 'Exiting updateSession Controller Function'
-    })
+      message: "Exiting updateSession Controller Function",
+    });
     res.status(400).send({ message: "subscriber url is required." });
     return;
   }
@@ -77,13 +79,16 @@ export const updateSession = async (req: Request, res: Response) => {
     const response = await updateSessionService(subscriber_url, sessionData);
     setSessionCookie(res, subscriber_url);
     logInfo({
-      message: 'Exiting updateSession Controller Function',
-      meta: { sessionId: subscriber_url }
-    })
+      message: "Exiting updateSession Controller Function",
+      meta: { sessionId: subscriber_url },
+    });
     res.status(200).send({ message: response });
   } catch (error: any) {
     logError({
-      message: 'Error in updateSession Controller Function',error,meta: { sessionId: subscriber_url }});
+      message: "Error in updateSession Controller Function",
+      error,
+      meta: { sessionId: subscriber_url },
+    });
     res
       .status(500)
       .send({ message: "Error updating session", error: error.message });
@@ -92,8 +97,8 @@ export const updateSession = async (req: Request, res: Response) => {
 
 export const deleteSession = async (req: Request, res: Response) => {
   logInfo({
-    message: 'Entering deleteSession Controller Function'
-  })
+    message: "Entering deleteSession Controller Function",
+  });
   const subscriber_url = req.query.subscriber_url as string;
 
   if (!subscriber_url) {
@@ -105,16 +110,16 @@ export const deleteSession = async (req: Request, res: Response) => {
     const response = await deleteService(subscriber_url);
     setSessionCookie(res, subscriber_url);
     logInfo({
-      message: 'Exiting deleteSession Controller Function',
-      meta: { sessionId: subscriber_url }
-    })
+      message: "Exiting deleteSession Controller Function",
+      meta: { sessionId: subscriber_url },
+    });
     res.status(200).send({ message: response });
   } catch (error: any) {
     logError({
-      message: 'Error in deleteSession Controller Function',
+      message: "Error in deleteSession Controller Function",
       error,
-      meta: { sessionId: subscriber_url }
-    })
+      meta: { sessionId: subscriber_url },
+    });
     res
       .status(500)
       .send({ message: "Error deleting session", error: error.message });
@@ -123,39 +128,39 @@ export const deleteSession = async (req: Request, res: Response) => {
 
 export const updateCacheDb = async (req: Request, res: Response) => {
   logInfo({
-    message: 'Entering updateCacheDb Controller Function'
-  })
+    message: "Entering updateCacheDb Controller Function",
+  });
   const db_id = parseInt(req.query.db_id as string);
 
   if (!db_id && db_id !== 0) {
     logInfo({
-      message: 'Exiting updateCacheDb Controller Function'
-    })
+      message: "Exiting updateCacheDb Controller Function",
+    });
     res.status(400).send({ message: "db_id is required." });
     return;
   }
   switchCacheDb(db_id);
   logInfo({
-    message: 'Exiting updateCacheDb Controller Function',
-    meta: { db_id }
-  })
+    message: "Exiting updateCacheDb Controller Function",
+    meta: { db_id },
+  });
   res.send({ message: "Cache DB swithced" });
 };
 
 export const getAllSession = async (req: Request, res: Response) => {
   logInfo({
-    message: 'Entering getAllSession Controller Function'
-  })
+    message: "Entering getAllSession Controller Function",
+  });
   try {
     const sessionData = await getAllSessionService();
     logInfo({
-      message: 'Exiting getAllSession Controller Function'
-    })
+      message: "Exiting getAllSession Controller Function",
+    });
     res.status(200).send(sessionData);
   } catch (error: any) {
     logError({
-      message: 'Error in getAllSession Controller Function',
-      error
+      message: "Error in getAllSession Controller Function",
+      error,
     });
     res
       .status(500)
@@ -166,21 +171,84 @@ export const getAllSession = async (req: Request, res: Response) => {
 export const createSession = async (req: Request, res: Response) => {
   const { sessionID, payload } = req.body;
   logInfo({
-    message: 'Entering createSession Controller Function'
-  })
+    message: "Entering createSession Controller Function",
+  });
   try {
     const response = await createSessionService(sessionID, payload);
     logInfo({
-      message: 'Exiting createSession Controller Function'
-    })
+      message: "Exiting createSession Controller Function",
+    });
     res.status(200).send({ message: response });
   } catch (error: any) {
     logError({
-      message: 'Error in getAllSession Controller Function',
-      error
+      message: "Error in getAllSession Controller Function",
+      error,
     });
     res
       .status(500)
       .send({ message: "Error creating session", error: error.message });
+  }
+};
+
+export const getLogs = async (req: Request, res: Response) => {
+  const transactionId = req.params.transactionId;
+
+  if (!transactionId) {
+    res.status(400).send({ message: "transactionId is required" });
+    return;
+  }
+
+  try {
+    const logs = await getLogsForTransactionId(transactionId);
+
+    if (!Array.isArray(logs) || logs.length === 0) {
+      res.status(404).json({ message: "No logs found for this transactionId" });
+      return;
+    }
+
+    // Group logs by base action (e.g., SELECT + ON_SELECT -> "select")
+    const grouped: Record<string, any[]> = {};
+
+    for (const log of logs) {
+      const action = log.action?.toLowerCase() || "unknown";
+      const baseAction = action.startsWith("on_")
+        ? action.replace("on_", "")
+        : action;
+      const key = `${action}_${log.payloadId}`;
+
+      const logData = {
+        [key]: {
+          reqHeader: log.reqHeader,
+          jsonRequest: log.jsonRequest,
+          jsonResponse: log.jsonResponse,
+          createdAt: log.createdAt,
+        },
+      };
+
+      if (!grouped[baseAction]) grouped[baseAction] = [];
+      grouped[baseAction].push(logData);
+    }
+
+    // Prepare ZIP for response
+    res.setHeader("Content-Type", "application/zip");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${transactionId}_logs.zip"`
+    );
+
+    const archive = archiver("zip", { zlib: { level: 9 } });
+    archive.pipe(res);
+
+    // Add one JSON file per base action
+    for (const [action, entries] of Object.entries(grouped)) {
+      archive.append(JSON.stringify(entries, null, 2), {
+        name: `${action}.json`,
+      });
+    }
+
+    await archive.finalize();
+  } catch (err) {
+    console.error("Error creating zip:", err);
+    res.status(500).json({ error: "Failed to generate ZIP file" });
   }
 };

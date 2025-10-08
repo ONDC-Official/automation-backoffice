@@ -5,12 +5,13 @@
 		"@opentelemetry/exporter-jaeger": "2.0.0",
 		"@opentelemetry/exporter-prometheus": "0.200.0",
 		"@opentelemetry/resources": "^2.0.0",
-		"@opentelemetry/exporter-trace-otlp-http": "^0.201.0",		
+		"@opentelemetry/exporter-trace-otlp-http": "^0.201.0",  
 		"@opentelemetry/sdk-logs": "0.200.0",
 		"@opentelemetry/sdk-metrics": "2.0.0",
 		"@opentelemetry/sdk-node": "0.200.0",
 		"@opentelemetry/semantic-conventions": "1.32.0",
 		"@types/axios": "^0.14.4",
+		"archiver": "^7.0.1",
 		"axios": "^1.7.9",
 		"connect-redis": "^7.1.1",
 		"cookie-parser": "^1.4.7",
@@ -30,6 +31,7 @@
 		"chalk": "^5.4.1"
 	},
 	"devDependencies": {
+		"@types/archiver": "^6.0.3",
 		"@types/chalk": "^0.4.31",
 		"@types/connect-redis": "^0.0.23",
 		"@types/cookie-parser": "^1.4.7",
