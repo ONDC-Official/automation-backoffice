@@ -60,6 +60,8 @@ jobs:
           echo "REDIS_USERNAME=${{ secrets.REDIS_USERNAME }}" >> \$REPO_DIR/backend/.env
           echo "SERVICE_NAME=${{ vars.SERVICE_NAME }}" >> \$REPO_DIR/backend/.env
           echo "TRACE_URL=${{ vars.TRACE_URL }}" >> \$REPO_DIR/backend/.env
+          echo "DB_SERVICE=${{ vars.DB_SERVICE }}" >> \$REPO_DIR/backend/.env
+          echo "DB_KEY=${{ secrets.API_SERVICE_KEY }}" >> \$REPO_DIR/backend/.env
           EOF
 
       - name: Verify docker-compose.yml files
