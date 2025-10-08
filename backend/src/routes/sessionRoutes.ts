@@ -8,6 +8,7 @@ import {
   updateCacheDb,
   getAllSession,
   createSession,
+  getLogs
 } from "../controllers/sessionController";
 import validateToken from "../middleware";
 import otelTracing from "../services/tracing-service";
@@ -20,5 +21,6 @@ router.put("/",otelTracing('','','query.subscriber_url'), validateToken, updateS
 router.delete("/",otelTracing('','','query.subscriber_url'), validateToken, deleteSession);
 router.post("/",otelTracing('','body.sessionID'), createSession);
 router.post("/updatedb", updateCacheDb);
+router.get("/logs/:transactionId", getLogs);
 
 export default router;
