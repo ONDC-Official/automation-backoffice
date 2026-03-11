@@ -1,0 +1,160 @@
+name: Build and Deploy to EKS
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.bump.outputs.version }}
+      image_tag: ${{ steps.bump.outputs.image_tag }}
+      environment: ${{ steps.bump.outputs.environment }}
+      target_file: ${{ steps.bump.outputs.target_file }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Bump patch version and set outputs
+        id: bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          current=$(cat version.txt)
+          IFS='.' read -r major minor patch <<< "$current"
+          patch=$((patch + 1))
+          next="$major.$minor.$patch"
+          echo "Bumping version: $current -> $next"
+
+          echo "$next" > version.txt
+          git add version.txt
+          git commit -m "ci: bump version to $next [skip ci]"
+          git push
+
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            echo "environment=prod"                                        >> "$GITHUB_OUTPUT"
+            echo "image_tag=prod-$next"                                   >> "$GITHUB_OUTPUT"
+            echo "target_file=k8/aws/helm/service-layer/values-prod.yaml" >> "$GITHUB_OUTPUT"
+          else
+            echo "environment=dev"                                         >> "$GITHUB_OUTPUT"
+            echo "image_tag=dev-$next"                                     >> "$GITHUB_OUTPUT"
+            echo "target_file=k8/aws/helm/service-layer/values.yaml"      >> "$GITHUB_OUTPUT"
+          fi
+          echo "version=$next" >> "$GITHUB_OUTPUT"
+
+  build-and-push:
+    needs: bump-version
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - service: backend
+            context: ./backend
+            image: ghcr.io/ondc-official/workbench-backoffice-backend
+          - service: frontend
+            context: ./frontend
+            image: ghcr.io/ondc-official/workbench-backoffice-frontend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push ${{ matrix.service }} image
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          push: true
+          tags: |
+            ${{ matrix.image }}:${{ needs.bump-version.outputs.image_tag }}
+            ${{ matrix.image }}:latest
+          cache-from: type=registry,ref=${{ matrix.image }}:cache
+          cache-to: type=registry,ref=${{ matrix.image }}:cache,mode=max
+
+  update-iac:
+    needs: [bump-version, build-and-push]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          repositories: automation-iac
+
+      - name: Clone automation-iac repo
+        uses: actions/checkout@v4
+        with:
+          repository: ONDC-Official/automation-iac
+          token: ${{ steps.app-token.outputs.token }}
+          path: automation-iac
+
+      - name: Update backoffice image tags in Helm values
+        env:
+          TARGET_FILE: ${{ needs.bump-version.outputs.target_file }}
+          IMAGE_TAG: ${{ needs.bump-version.outputs.image_tag }}
+        run: |
+          python3 << 'PYEOF'
+          import re, os
+
+          target    = f"automation-iac/{os.environ['TARGET_FILE']}"
+          image_tag = os.environ['IMAGE_TAG']
+
+          # Sections in values.yaml whose `tag:` lines should be updated
+          tracked_sections = {'backofficeBackend', 'backofficeFrontend'}
+
+          with open(target, 'r') as f:
+              lines = f.readlines()
+
+          current_section = None
+          result = []
+          for line in lines:
+              # Top-level keys have no leading whitespace
+              top_level = re.match(r'^([a-zA-Z]\S*):', line)
+              if top_level:
+                  key = top_level.group(1)
+                  current_section = key if key in tracked_sections else None
+              if current_section and re.match(r'^\s+tag:\s', line):
+                  line = re.sub(r'(tag:\s).*', rf'\g<1>{image_tag}', line)
+              result.append(line)
+
+          with open(target, 'w') as f:
+              f.writelines(result)
+
+          print(f"Updated {tracked_sections} tags to '{image_tag}' in {target}")
+          PYEOF
+
+      - name: Commit and push tag update to IaC repo
+        run: |
+          cd automation-iac
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "${{ needs.bump-version.outputs.target_file }}"
+          git diff --cached --quiet && echo "No changes to commit" && exit 0
+          git commit -m "ci: update backoffice image tags to ${{ needs.bump-version.outputs.image_tag }} (${{ needs.bump-version.outputs.environment }})"
+          git push
