@@ -101,7 +101,7 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
           path: automation-iac
 
-      - name: Update image tags in Helm values
+      - name: Update  image tags in Helm values
         run: |
           python3 << 'PYEOF'
           import re, os
