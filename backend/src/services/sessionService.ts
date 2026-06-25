@@ -5,15 +5,22 @@ import {
   SessionKeyType,
 } from "../interfaces/sessionData";
 import { fetchConfigService } from "./flowService";
-// import redisClient from '../config/redisConfig';
+import { logInfo, logError } from "../config/winstonConfig";
 
 const SESSION_EXPIRY = 3600; // 1 hour
 
 export const switchCacheDb = (db_id: number) => {
+  logInfo({
+    message: `Entering switchCacheDb Service Function`});
   RedisService.useDb(db_id);
+  logInfo({
+    message: `Exiting switchCacheDb Service Function`});
 };
 
-export const dummy = async (sessionId: string, data: SessionData) => {
+export const dummy = async (
+  sessionId: string,
+  data: SessionData
+) => {
   const {
     city,
     domain,
@@ -22,7 +29,8 @@ export const dummy = async (sessionId: string, data: SessionData) => {
     subscriberUrl,
     version,
   } = data;
-
+  logInfo({
+    message: `Entering createSession Service Function`});
   const flowConfig = fetchConfigService();
 
   const domainFlow = flowConfig.domain.find((s) => s.name === domain);
@@ -70,20 +78,31 @@ export const dummy = async (sessionId: string, data: SessionData) => {
 
 export const getAllSessionService = async () => {
   try {
+    logInfo({
+      message: `Entering getAllSession Service Function`});
     // Fetch session data from Redis
     // const sessionData = await redisClient.get(sessionId);
     const sessionData = await RedisService.getAllKeys();
-
     // Return the session data if found
+    logInfo({
+      message: `Exiting getAllSession Service Function`});
     return sessionData;
   } catch (error: any) {
     // Return a 500 error in case of any issues
+    logError({
+      message: "Error in getAllSession Service Function",
+      error,
+    });
     throw new Error(`${error.message}`);
   }
 };
 
 export const getSessionService = async (sessionKey: SessionKeyType) => {
   try {
+    logInfo({
+      message: `Entering getSession Service Function`,
+      meta: { sessionKey },
+    });
     // Fetch session data from Redis
     // const sessionData = await redisClient.get(sessionId);
     const sessionData = await RedisService.getKey(sessionKey);
@@ -92,9 +111,17 @@ export const getSessionService = async (sessionKey: SessionKeyType) => {
     // }
 
     // Return the session data if found
+    logInfo({
+      message: `Exiting getSession Service Function`
+    });
     return JSON.parse(sessionData || "{}");
   } catch (error: any) {
     // Return a 500 error in case of any issues
+    logError({
+      message: "Error in getSession Service Function",
+      error,
+      meta: { sessionKey }
+    });
     throw new Error(`${error.message}`);
   }
 };
@@ -116,12 +143,19 @@ export const updateSessionService = async (
   //     subscriberUrl,
   //     difficulty,
   //   } = data;
-
+  logInfo({
+    message: `Entering updateSession Service Function`,
+    meta: { subscriber_url },
+  });
   try {
     // Retrieve the session data from Redis
     const sessionData = await RedisService.getKey(subscriber_url);
 
     if (!sessionData) {
+      logInfo({
+        message: `Exiting updateSession Service Function`,
+        meta: { subscriber_url },
+      });
       throw new Error("Session not found");
     }
 
@@ -151,19 +185,40 @@ export const updateSessionService = async (
       JSON.stringify(data),
       SESSION_EXPIRY
     );
-
+    logInfo({
+      message: `Exiting updateSession Service Function`,
+      meta: { subscriber_url },
+    });
     return "Session updated successfully";
   } catch (error: any) {
+    logError({
+      message: "Error in updateSession Service Function",
+      error,
+      meta: { subscriber_url }
+    });
     throw new Error(`${error.message}`);
   }
 };
 
 export const deleteService = async (subscriber_url: string) => {
   try {
+    logInfo({
+      message: `Entering deleteService Function`,
+      meta: { subscriber_url },
+    });
     await RedisService.deleteKey(subscriber_url);
 
+    logInfo({
+      message: `Exiting deleteService Function`,
+      meta: { subscriber_url },
+    });
     return "Session deleted successfully";
   } catch (e: any) {
+    logError({
+      message: "Error in deleteService Function",
+      error: e,
+      meta: { subscriber_url }
+    });
     throw new Error(`${e.message}`);
   }
 };
