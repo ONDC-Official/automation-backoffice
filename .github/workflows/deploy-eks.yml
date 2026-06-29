@@ -68,7 +68,7 @@ jobs:
         id: meta-backend
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/ondc-official/automation-backoffice/backend
+          images: ghcr.io/ondc-official/automation-backoffice-backend
           tags: ${{ needs.version.outputs.image_tag }}
           labels: |
             org.opencontainers.image.revision=${{ github.sha }}
@@ -108,7 +108,7 @@ jobs:
         id: meta-frontend
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/ondc-official/automation-backoffice/frontend
+          images: ghcr.io/ondc-official/automation-backoffice-frontend
           tags: ${{ needs.version.outputs.image_tag }}
           labels: |
             org.opencontainers.image.revision=${{ github.sha }}
