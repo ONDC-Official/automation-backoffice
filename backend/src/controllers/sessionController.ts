@@ -191,7 +191,9 @@ export const createSession = async (req: Request, res: Response) => {
 };
 
 export const getLogs = async (req: Request, res: Response) => {
-  const transactionId = req.params.transactionId;
+  const transactionId = Array.isArray(req.params.transactionId)
+    ? req.params.transactionId[0]
+    : req.params.transactionId;
 
   if (!transactionId) {
     res.status(400).send({ message: "transactionId is required" });
