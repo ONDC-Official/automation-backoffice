@@ -184,5 +184,8 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "ci: update automation-backoffice image tags to ${{ needs.version.outputs.image_tag }} (${{ needs.version.outputs.environment }})"
-            git push
+            for i in 1 2 3; do
+              git pull --rebase origin main && git push && break
+              sleep $((i * 5))
+            done
           fi
