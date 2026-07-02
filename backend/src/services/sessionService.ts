@@ -1,4 +1,4 @@
-import { RedisService } from "ondc-automation-cache-lib";
+import { RedisService } from "@ondc/ondc-automation-cache-lib";
 import { ContextCache, SessionData } from "../interfaces/sessionData";
 import {
   TransformedSessionData,
