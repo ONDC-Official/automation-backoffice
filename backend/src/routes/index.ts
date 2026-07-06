@@ -5,6 +5,8 @@ import authRoutes from "./authRoutes";
 
 const router = Router();
 
+router.get("/health", (_req, res) => res.json({ status: "ok" }));
+
 // Mount session-related routes
 router.use("/sessions", sessionRoutes);
 router.use("/auth", authRoutes);

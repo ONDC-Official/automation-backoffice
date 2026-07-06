@@ -23,7 +23,7 @@
 		"js-yaml": "^4.1.0",
 		"jsonwebtoken": "^9.0.2",
 		"lodash": "^4.17.21",
-		"ondc-automation-cache-lib": "^1.0.4",
+		"@ondc/ondc-automation-cache-lib": "^2.1.0",
 		"redis": "^4.7.0",
 		"uuid": "^11.0.3",
 		"winston": "^3.17.0",
