@@ -1,35 +1,23 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import React from "react";
+import { FaGithub } from "react-icons/fa";
+import { useSearchParams } from "react-router-dom";
+
+const errorMessages: Record<string, string> = {
+  missing_code: "GitHub did not return an authorization code. Please try again.",
+  token_exchange_failed: "Could not complete GitHub sign-in. Please try again.",
+  oauth_error: "Something went wrong during sign-in. Please try again.",
+  not_authorized:
+    "This GitHub account does not have access. Please contact an administrator to be added.",
+};
 
 const LoginPage: React.FC = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const error = searchParams.get("error");
+  const login = searchParams.get("login");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!username || !password) {
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/auth/login`,
-        {
-          username: username,
-          password: password,
-        }
-      );
-
-      console.log("response.data", response.data);
-
-      localStorage.setItem("userData", JSON.stringify(response.data));
-      navigate("/dashboard#api-service");
-    } catch (e) {
-      console.log("something went wrong: ", e);
-    }
+  const handleGithubLogin = () => {
+    // Full-page redirect to the backend, which forwards to GitHub.
+    window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/github`;
   };
 
   return (
@@ -41,48 +29,37 @@ const LoginPage: React.FC = () => {
             alt="Logo"
             className="h-16 w-auto"
           />
-          <h1 className="text-2xl font-semibold text-gray-700">Login</h1>
+          <h1 className="text-2xl font-semibold text-gray-700 mt-2">
+            Back Office
+          </h1>
+          <p className="text-sm text-gray-500 mt-1 text-center">
+            Sign in with your GitHub account
+          </p>
         </div>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label
-              htmlFor="username"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="Username"
-            />
+
+        {error && (
+          <div className="mb-4 rounded-md bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
+            {errorMessages[error] || "Sign-in failed. Please try again."}
+            {error === "not_authorized" && login && (
+              <span className="block mt-1 text-red-500">
+                Signed in as @{login}.
+              </span>
+            )}
           </div>
-          <div className="mb-6">
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="Password"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
-          >
-            Login
-          </button>
-        </form>
+        )}
+
+        <button
+          type="button"
+          onClick={handleGithubLogin}
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 text-white bg-gray-900 rounded-lg hover:bg-black focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-75"
+        >
+          <FaGithub className="h-5 w-5" />
+          Continue with GitHub
+        </button>
+
+        <p className="text-xs text-gray-400 mt-4 text-center">
+          New accounts require admin approval before access is granted.
+        </p>
       </div>
     </div>
   );

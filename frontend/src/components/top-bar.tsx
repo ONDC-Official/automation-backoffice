@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getStoredUser, isAdmin, logout } from "../utils/auth";
 
 interface NavLink {
   label: string;
@@ -13,6 +15,14 @@ const navLinks: NavLink[] = [
 
 const TopBar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const admin = isAdmin();
+  const user = getStoredUser();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login", { replace: true });
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 bg-white shadow-md z-50">
@@ -84,6 +94,29 @@ const TopBar = () => {
               </a>
             </li>
           ))}
+          {admin && (
+            <li>
+              <button
+                onClick={() => navigate("/admin/users")}
+                className="text-gray-700 hover:text-blue-500 block py-2"
+              >
+                User Management
+              </button>
+            </li>
+          )}
+          <li className="flex items-center gap-3">
+            {user?.login && (
+              <span className="text-gray-500 py-2 hidden md:inline">
+                @{user.login}
+              </span>
+            )}
+            <button
+              onClick={handleLogout}
+              className="text-red-600 hover:text-red-700 block py-2"
+            >
+              Logout
+            </button>
+          </li>
         </ul>
       </nav>
     </header>

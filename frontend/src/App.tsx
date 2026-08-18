@@ -1,50 +1,39 @@
-import { useEffect, useState } from "react";
-// import { ToastContainer } from "react-toastify";
 import "./App.css";
 import MainContent from "./components/main-content";
 import TopBar from "./components/top-bar";
 import LoginPage from "./pages/login";
-import {
-  // BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
+import AuthCallback from "./pages/auth-callback";
+import AdminUsersPage from "./pages/admin-users";
+import { Route, Routes, Navigate } from "react-router-dom";
 import NotFoundPage from "./components/ui/not-found";
-
-const isAuthenticated = (): boolean => {
-  return localStorage.getItem("userData") !== null;
-};
+import { isAuthenticated, isAdmin } from "./utils/auth";
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  return isAuthenticated() ? <>{children}</> : <Navigate to="/" replace />;
+  return isAuthenticated() ? <>{children}</> : <Navigate to="/login" replace />;
+};
+
+const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  if (!isAuthenticated()) return <Navigate to="/login" replace />;
+  return isAdmin() ? <>{children}</> : <Navigate to="/dashboard" replace />;
 };
 
 function App() {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("userData") as string);
-
-    console.log("userData");
-
-    setUser(userData || "");
-  }, []);
-
-  if (user === null) {
-    return <div>Loding...</div>;
-  }
-
-  console.log("?>", import.meta.env.VITE_BASE_URL);
-
   return (
     <Routes>
       <Route
         path={`${import.meta.env.VITE_BASE_URL}`}
-        element={<LoginPage />}
+        element={
+          isAuthenticated() ? (
+            <Navigate to="/dashboard#api-service" replace />
+          ) : (
+            <LoginPage />
+          )
+        }
       />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/auth/callback" element={<AuthCallback />} />
       <Route
         path="/dashboard"
         element={
@@ -56,6 +45,14 @@ function App() {
               </main>
             </>
           </PrivateRoute>
+        }
+      />
+      <Route
+        path="/admin/users"
+        element={
+          <AdminRoute>
+            <AdminUsersPage />
+          </AdminRoute>
         }
       />
       <Route path="*" element={<NotFoundPage />} />
