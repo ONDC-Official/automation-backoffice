@@ -1,6 +1,7 @@
 import React from "react";
 import { FaGithub } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
+import { backendUrl } from "../config/env";
 
 const errorMessages: Record<string, string> = {
   missing_code: "GitHub did not return an authorization code. Please try again.",
@@ -17,7 +18,7 @@ const LoginPage: React.FC = () => {
 
   const handleGithubLogin = () => {
     // Full-page redirect to the backend, which forwards to GitHub.
-    window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/github`;
+    window.location.href = `${backendUrl}/auth/github`;
   };
 
   return (

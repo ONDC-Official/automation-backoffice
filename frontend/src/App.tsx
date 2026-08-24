@@ -23,7 +23,7 @@ function App() {
   return (
     <Routes>
       <Route
-        path={`${import.meta.env.VITE_BASE_URL}`}
+        path="/"
         element={
           isAuthenticated() ? (
             <Navigate to="/dashboard#api-service" replace />

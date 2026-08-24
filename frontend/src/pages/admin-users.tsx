@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getStoredUser } from "../utils/auth";
+import { backendUrl } from "../config/env";
 
 interface AdminUser {
   id: string;
@@ -28,7 +29,7 @@ const AdminUsersPage: React.FC = () => {
 
   const current = getStoredUser();
   const token = current?.token;
-  const backend = import.meta.env.VITE_BACKEND_URL;
+  const backend = backendUrl;
   const authHeader = { headers: { Authorization: `Bearer ${token}` } };
 
   const fetchUsers = useCallback(async () => {

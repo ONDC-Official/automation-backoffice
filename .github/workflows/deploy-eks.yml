@@ -115,6 +115,14 @@ jobs:
             org.opencontainers.image.source=${{ github.event.repository.html_url }}
             org.opencontainers.image.version=${{ needs.version.outputs.version }}
 
+      - name: Write frontend build env
+        run: |
+          printf 'VITE_BACKEND_URL=%s\n' "$VITE_BACKEND_URL" > frontend/.env.production
+          printf 'VITE_BASE_URL=%s\n' "$VITE_BASE_URL" >> frontend/.env.production
+        env:
+          VITE_BACKEND_URL: /backoffice-api
+          VITE_BASE_URL: /backoffice
+
       - name: Build and push frontend image
         uses: docker/build-push-action@v5
         with:

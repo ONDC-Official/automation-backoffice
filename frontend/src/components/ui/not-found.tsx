@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const NotFoundPage: React.FC = () => {
 	return (
@@ -12,12 +13,12 @@ const NotFoundPage: React.FC = () => {
 					Sorry, the page you're looking for doesn't exist or has been moved.
 				</p>
 				<div className="mt-6">
-					<a
-						href="/"
+					<Link
+						to="/"
 						className="inline-block px-6 py-3 text-white bg-sky-600 hover:bg-sky-700 font-medium rounded-lg shadow-md transition duration-300"
 					>
 						Go Back Home
-					</a>
+					</Link>
 				</div>
 			</div>
 		</div>

@@ -4,10 +4,11 @@ import "./index.css";
 import App from "./App.tsx";
 import { BrowserRouter } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import { routerBasename } from "./config/env";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={routerBasename}>
       <App />
       <ToastContainer
         position="bottom-right"
