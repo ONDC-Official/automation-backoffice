@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import Button from "../ui/button";
 import { useNavigate } from "react-router-dom";
 import { MdEdit } from "react-icons/md";
+import { backendUrl } from "../../config/env";
 
 interface IProps {
   label: string;
@@ -31,7 +32,7 @@ const Dashboard = ({ label, db_id }: IProps) => {
 
     try {
       await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/sessions/updatedb`,
+        `${backendUrl}/sessions/updatedb`,
         {},
         {
           params: { db_id: db_id },
@@ -58,7 +59,7 @@ const Dashboard = ({ label, db_id }: IProps) => {
 
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/sessions/all`,
+        `${backendUrl}/sessions/all`,
         {
           headers: {
             Authorization: `Bearer ${userData.token}`,
@@ -88,7 +89,7 @@ const Dashboard = ({ label, db_id }: IProps) => {
 
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/sessions`,
+        `${backendUrl}/sessions`,
         {
           params: { subscriber_url: key },
           headers: {
@@ -124,7 +125,7 @@ const Dashboard = ({ label, db_id }: IProps) => {
 
     try {
       await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/sessions`,
+        `${backendUrl}/sessions`,
         parsedPayload,
         {
           params: { subscriber_url: subUrl },
@@ -149,7 +150,7 @@ const Dashboard = ({ label, db_id }: IProps) => {
     }
 
     try {
-      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/sessions`, {
+      await axios.delete(`${backendUrl}/sessions`, {
         params: { subscriber_url: subUrl },
         headers: {
           Authorization: `Bearer ${userData.token}`,

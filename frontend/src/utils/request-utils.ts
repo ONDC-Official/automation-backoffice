@@ -1,6 +1,7 @@
 import axios from "axios";
 import { CacheSessionData } from "../types/session-types";
 import { toast } from "react-toastify";
+import { backendUrl } from "../config/env";
 
 export const triggerSearch = async (
 	session: CacheSessionData,
@@ -16,7 +17,7 @@ export const triggerSearch = async (
 	};
 
 	const response = await axios.post(
-		`${import.meta.env.VITE_BACKEND_URL}/flow/trigger`,
+		`${backendUrl}/flow/trigger`,
 		data
 	);
 	toast.info("search triggered");
@@ -26,7 +27,7 @@ export const triggerSearch = async (
 
 export const putCacheData = async (data: any, subUrl: string) => {
 	return await axios.put(
-		`${import.meta.env.VITE_BACKEND_URL}/sessions`,
+		`${backendUrl}/sessions`,
 		{
 			...data,
 		},
